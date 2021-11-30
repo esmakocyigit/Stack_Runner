@@ -1,17 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class MovingCube : MonoBehaviour
 {
     public static MovingCube CurrentCube { get; private set; }
     public static MovingCube LastCube { get; private set; }
-    public MoveDirection MoveDirection { get;  set; }
+    public MoveDirection MoveDirection { get; set; }
 
-    [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float xScale;
+
 
 
     private void OnEnable()
@@ -57,7 +56,7 @@ public class MovingCube : MonoBehaviour
 
     private void SplitCubeOnX(float hangover, float direction)
     {
-        if (LastCube != null)
+        if (LastCube != null && PlayerController.Instance.winGame == false)
         {
 
             float newXPosition = transform.position.x - (hangover / 2);
@@ -72,6 +71,14 @@ public class MovingCube : MonoBehaviour
             float fallingBlockXPosition = cubeEdge + fallingBlockSize / 2f * direction;
 
             SpawnDropCube(fallingBlockXPosition, fallingBlockSize);
+        }
+
+        else if (PlayerController.Instance.winGame == true)
+        {
+            CurrentCube.transform.localScale = new Vector3(xScale, transform.localScale.y, transform.localScale.z);
+            CurrentCube.transform.position = new Vector3(0, CurrentCube.transform.position.y, CurrentCube.transform.position.z);
+            // moveSpeed += .2f;
+            CurrentCube = this;
         }
 
 
@@ -94,6 +101,15 @@ public class MovingCube : MonoBehaviour
             transform.position += transform.right * Time.deltaTime * moveSpeed;
         else
             transform.position -= transform.right * Time.deltaTime * moveSpeed;
-     
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Final")
+        {
+            PlayerController.Instance.winGame = true;
+            print("wim");
+        }
     }
 }

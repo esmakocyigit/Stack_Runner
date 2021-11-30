@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance;
 
     public float forwardSpeed;
+    private float firstSpeed;
     [SerializeField] LayerMask ground;
     [SerializeField] LayerMask groundFinal;
     [SerializeField] Transform rayPos;
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
+        firstSpeed = forwardSpeed;
     }
 
     private void Update()
@@ -65,18 +66,26 @@ public class PlayerController : MonoBehaviour
         {
             Win();
         }
-        if (other.gameObject.tag=="Respawn")
+        if (other.gameObject.tag == "Respawn")
         {
             winGame = true;
-            print("wim");
+            
         }
 
 
+    }
+    public void Game()
+    {
+        winGame = false;
+        
+      
+        StartCoroutine(nameof(Speed));
     }
 
     private void Win()
     {
         forwardSpeed = 0;
+        firstSpeed += .1f;
         m_Animator.SetTrigger("win");
     }
 
@@ -84,6 +93,13 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(0);
+    }
+
+    IEnumerator Speed()
+    {
+        yield return new WaitForSeconds(.1f);
+        m_Animator.SetTrigger("run");
+        forwardSpeed = firstSpeed;
     }
     #endregion
 }

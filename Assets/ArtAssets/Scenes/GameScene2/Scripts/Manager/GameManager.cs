@@ -5,10 +5,12 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
     [HideInInspector] public bool isGameStarted;
+    public bool isStart;
 
     private CubeSpawner[] spawners;
     private int spawnerIndex;
     private CubeSpawner currentSpawner;
+
 
     private void Awake()
     {
@@ -18,10 +20,10 @@ public class GameManager : Singleton<GameManager>
     private void Update()
     {
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") || isStart == true)
         {
 
-            if (MovingCube.CurrentCube != null && MovingCube.LastCube != null)
+            if (MovingCube.CurrentCube != null && MovingCube.LastCube != null )
             {
 
                 MovingCube.CurrentCube.Stop();
@@ -30,11 +32,13 @@ public class GameManager : Singleton<GameManager>
             spawnerIndex = spawnerIndex == 0 ? 1 : 0;
 
             currentSpawner = spawners[spawnerIndex];
+
             if (PlayerController.Instance.winGame == false)
             {
 
                 currentSpawner.SpawnCube();
             }
+            isStart = false;
         }
     }
 

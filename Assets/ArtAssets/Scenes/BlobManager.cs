@@ -11,7 +11,7 @@ public class BlobManager : MonoBehaviour
 
     private void Start()
     {
-        _stackCount = transform.GetChildCount();//stack içindeki eleman sayýsý
+        _stackCount = transform.childCount;//stack iï¿½indeki eleman sayï¿½sï¿½
         _stackContainer = new GameObject[_stackCount];
 
 
