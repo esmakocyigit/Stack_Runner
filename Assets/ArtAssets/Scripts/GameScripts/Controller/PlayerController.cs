@@ -3,34 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Singleton<PlayerController>
 {
     #region Variables
-
-    public static PlayerController Instance;
-
+    [Header("Movement Settings")]
     public float forwardSpeed;
     private float firstSpeed;
+
+    [Header("Ground Check Elements")]
     [SerializeField] LayerMask ground;
     [SerializeField] LayerMask groundFinal;
     [SerializeField] Transform rayPos;
+
+    [Header("Animation Settings")]
     [SerializeField] Animator m_Animator;
 
-    public bool winGame =false;
+    [HideInInspector] public bool winGame = false;
+    bool canPlayRunningAnimation;
     #endregion
 
     #region MonoBehaviour Callbacks
 
-    private void Awake()
+    public override void Awake()
     {
-        Instance = this;
+        base.Awake();
         firstSpeed = forwardSpeed;
     }
 
     private void Update()
     {
         if (GameManager.Instance.isGameStarted)
+        {
+            if (!canPlayRunningAnimation)
+            {
+                canPlayRunningAnimation = true;
+                m_Animator.SetTrigger("start");
+            }
             Running();
+        }
     }
 
     #endregion
@@ -51,10 +61,10 @@ public class PlayerController : MonoBehaviour
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.red);
         }
-       
+
         else
         {
-          
+
             GameManager.Instance.GameOver();
             StartCoroutine(nameof(Fail));
         }
@@ -62,23 +72,21 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag =="Final")
+        if (other.gameObject.tag == "Final")
         {
             Win();
         }
         if (other.gameObject.tag == "Respawn")
         {
             winGame = true;
-            
+
         }
-
-
     }
+
     public void Game()
     {
         winGame = false;
-        
-      
+
         StartCoroutine(nameof(Speed));
     }
 
@@ -91,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Fail()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.3f);
         SceneManager.LoadScene(0);
     }
 

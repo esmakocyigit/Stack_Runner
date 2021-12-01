@@ -11,21 +11,18 @@ public class GameManager : Singleton<GameManager>
     private int spawnerIndex;
     private CubeSpawner currentSpawner;
 
-
-    private void Awake()
+    public override void Awake()
     {
+        base.Awake();
         spawners = FindObjectsOfType<CubeSpawner>();
     }
 
     private void Update()
     {
-
         if (Input.GetButtonDown("Fire1") || isStart == true)
         {
-
             if (MovingCube.CurrentCube != null && MovingCube.LastCube != null )
             {
-
                 MovingCube.CurrentCube.Stop();
             }
 
@@ -35,18 +32,16 @@ public class GameManager : Singleton<GameManager>
 
             if (PlayerController.Instance.winGame == false)
             {
-
                 currentSpawner.SpawnCube();
             }
+
             isStart = false;
         }
     }
 
-
     public void StartGame()
     {
         isGameStarted = true;
-
     }
 
     public void GameOver()

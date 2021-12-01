@@ -11,8 +11,6 @@ public class MovingCube : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float xScale;
 
-
-
     private void OnEnable()
     {
         if (LastCube == null)
@@ -22,14 +20,13 @@ public class MovingCube : MonoBehaviour
         }
 
         CurrentCube = this;
-        GetComponent<Renderer>().material.color = GetRandomCokor();
-
+        GetComponent<Renderer>().material.color = GetRandomColor();
 
         transform.localScale = new Vector3(LastCube.transform.localScale.x, LastCube.transform.localScale.y, LastCube.transform.localScale.z);
 
     }
 
-    private Color GetRandomCokor()
+    private Color GetRandomColor()
     {
         return new Color(UnityEngine.Random.Range(0, 1f), UnityEngine.Random.Range(0, 1f), UnityEngine.Random.Range(0, 1f));
     }
@@ -47,6 +44,15 @@ public class MovingCube : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
+        if (Mathf.Abs(hangover) <= 0.07f)
+        {
+            SoundController.Instance.PlayClickSound(true);
+        }
+        else
+        {
+            SoundController.Instance.PlayClickSound(false);
+        }
+
         float direction = hangover > 0 ? 1f : -1f;
 
         SplitCubeOnX(hangover, direction);
@@ -58,7 +64,6 @@ public class MovingCube : MonoBehaviour
     {
         if (LastCube != null && PlayerController.Instance.winGame == false)
         {
-
             float newXPosition = transform.position.x - (hangover / 2);
             float newSize = LastCube.transform.localScale.x - Math.Abs(hangover);
             float fallingBlockSize = transform.localScale.x - newSize;
